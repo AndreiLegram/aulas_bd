@@ -1,0 +1,3 @@
+var text = '';
+
+const keywords = [];
