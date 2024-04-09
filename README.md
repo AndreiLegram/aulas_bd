@@ -2,7 +2,7 @@
 Aulas de Modelagem e Projeto de Banco de Dados.
 
 #### Links:
-- [Aulas POO2](https://github.com/ber0604/aulas_poo2)
+- [Aulas POO2](https://github.com/AndreiLegram/aulas_poo2)
 
 #### Created by:
 
