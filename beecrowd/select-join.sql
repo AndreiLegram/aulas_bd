@@ -13,9 +13,8 @@ LEFT JOIN categories ct ON p.id_categories = ct.id
 WHERE ct.id = 6;
 
 /* 5 - Categories */
-SELECT p.id, p.name FROM products p 
-LEFT JOIN categories ct ON p.id_categories = ct.id
-WHERE ct.name LIKE "super%";
+select id, name
+from products where id_categories = 9 or id_categories = 7;
 
 /* 6 - Providers' City in Alphabetical Order */
 SELECT DISTINCT city FROM providers ORDER BY city ASC;
@@ -31,9 +30,7 @@ LEFT JOIN prices p ON m.id_prices = p.id
 WHERE value < 2;
 
 /* 9 - September Rentals */
-SELECT r.rentals_date, c.name FROM rentals r
-LEFT JOIN customers c ON r.id_customers = c.id
-WHERE r.rentals_date BETWEEN '2016-09-01' AND '2016-09-30';
+select c.name, r.rentals_date from customers c join rentals r on c.id = r.id_customers where extract(month from r.rentals_date) = 9;
 
 /* 10 - Expanding the Business */
 SELECT DISTINCT city FROM customers;
@@ -45,9 +42,7 @@ WHERE l.id_customers IS NULL
 ORDER BY c.id;
 
 /* 12 - Provider Ajax SA */
-SELECT p.name, pr.name FROM products p 
-LEFT JOIN providers pr ON p.id_providers = pr.id
-WHERE pr.name = 'Ajax SA';
+select p1.name, p2.name from products p1 join providers p2 on p2.id = p1.id_providers and p2.name like 'Ajax SA';
 
 /* 13 - Imported Products */
 SELECT p.name, pr.name, c.name FROM products p
@@ -62,9 +57,10 @@ LEFT JOIN categories c ON p.id_categories = c.id
 WHERE p.price > 1000 AND c.name = 'Super Luxury';
 
 /* 15 - Amounts Between 10 and 20 */
-SELECT p.name FROM products p
-LEFT JOIN providers pr ON p.id_providers = pr.id
-WHERE pr.name LIKE 'p%' AND p.amount BETWEEN 10 AND 20;
+SELECT prod.name
+FROM providers AS prov
+JOIN products AS prod ON prov.id = prod.id_providers
+WHERE prod.amount BETWEEN 10 AND 20 AND prov.name LIKE 'P%';
 
 /* 16 - Legal Person */
 SELECT c.name FROM customers c
