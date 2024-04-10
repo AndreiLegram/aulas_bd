@@ -1,55 +1,71 @@
-select name from customers where state = 'RS';
+/* 1 - Basic Select */
+SELECT name FROM customers WHERE state = 'RS';
 
-select name, street from customers where city = 'Porto Alegre';
+/* 2 - Customer Address */
+SELECT name, street FROM customers WHERE city = 'Porto Alegre';
 
+/* 3 - Under 10 or Greater Than 100 */
 SELECT id, name FROM products WHERE price < 10 OR price > 100;
 
-select p.name, pr.name from products p left join providers pr on p.id_providers = pr.id
-left join categories ct on p.id_categories = ct.id
-where ct.id = 6;
+/* 4 - Executive Representatives */
+SELECT p.name, pr.name FROM products p LEFT JOIN providers pr ON p.id_providers = pr.id
+LEFT JOIN categories ct ON p.id_categories = ct.id
+WHERE ct.id = 6;
 
-select p.id, p.name from products p 
-left join categories ct on p.id_categories = ct.id
-where ct.name LIKE "super%";
+/* 5 - Categories */
+SELECT p.id, p.name FROM products p 
+LEFT JOIN categories ct ON p.id_categories = ct.id
+WHERE ct.name LIKE "super%";
 
+/* 6 - Providers' City in Alphabetical Order */
 SELECT DISTINCT city FROM providers ORDER BY city ASC;
 
-select m.id, m.name from movies m 
-left join genres g on m.id_genres = g.id
-where g.description = 'Action';
+/* 7 - Action Movies */
+SELECT m.id, m.name FROM movies m 
+LEFT JOIN genres g ON m.id_genres = g.id
+WHERE g.description = 'Action';
 
-select m.id, m.name from movies m 
-left join prices p on m.id_prices = p.id
-where value < 2;
+/* 8 - Cheap Movies */
+SELECT m.id, m.name FROM movies m 
+LEFT JOIN prices p ON m.id_prices = p.id
+WHERE value < 2;
 
-select r.rentals_date, c.name from rentals r
-left join customers c on r.id_customers = c.id
-where r.rentals_date between '2016-09-01' and '2016-09-30';
+/* 9 - September Rentals */
+SELECT r.rentals_date, c.name FROM rentals r
+LEFT JOIN customers c ON r.id_customers = c.id
+WHERE r.rentals_date BETWEEN '2016-09-01' AND '2016-09-30';
 
-select DISTINCT city from customers;
+/* 10 - Expanding the Business */
+SELECT DISTINCT city FROM customers;
 
-select c.id, c.name from customers c 
-left join locations l on l.id_customers = c.id
+/* 11 - No Rental */
+SELECT c.id, c.name FROM customers c 
+LEFT JOIN locations l ON l.id_customers = c.id
 WHERE l.id_customers IS NULL
 ORDER BY c.id;
 
-select p.name, pr.name from products p 
-left join providers pr on p.id_providers = pr.id
-where pr.name = 'Ajax SA';
+/* 12 - Provider Ajax SA */
+SELECT p.name, pr.name FROM products p 
+LEFT JOIN providers pr ON p.id_providers = pr.id
+WHERE pr.name = 'Ajax SA';
 
-select p.name, pr.name, c.name from products p
-left join providers pr on p.id_providers = pr.id
-left join categories c on p.id_categories = c.id
-where pr.name = 'Sansul SA' AND c.name = 'Imported';
+/* 13 - Imported Products */
+SELECT p.name, pr.name, c.name FROM products p
+LEFT JOIN providers pr ON p.id_providers = pr.id
+LEFT JOIN categories c ON p.id_categories = c.id
+WHERE pr.name = 'Sansul SA' AND c.name = 'Imported';
 
-select p.name, pr.name, p.price from products p
-left join providers pr on p.id_providers = pr.id
-left join categories c on p.id_categories = c.id
-where p.price > 1000 and c.name = 'Super Luxury';
+/* 14 - Super Luxury */
+SELECT p.name, pr.name, p.price FROM products p
+LEFT JOIN providers pr ON p.id_providers = pr.id
+LEFT JOIN categories c ON p.id_categories = c.id
+WHERE p.price > 1000 AND c.name = 'Super Luxury';
 
-select p.name from products p
-left join providers pr on p.id_providers = pr.id
-where pr.name LIKE 'p%' AND p.amount between 10 and 20;
+/* 15 - Amounts Between 10 and 20 */
+SELECT p.name FROM products p
+LEFT JOIN providers pr ON p.id_providers = pr.id
+WHERE pr.name LIKE 'p%' AND p.amount BETWEEN 10 AND 20;
 
+/* 16 - Legal Person */
 SELECT c.name FROM customers c
 JOIN legal_person lp ON lp.id_customers = c.id;
