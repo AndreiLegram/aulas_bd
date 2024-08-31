@@ -1,11 +1,10 @@
-# aulas_mpbd
-Aulas de Modelagem e Projeto de Banco de Dados.
+# aulas_bd
+Aulas de Banco de Dados.
 
 #### Links:
-- [Aulas POO2](https://github.com/AndreiLegram/aulas_poo2)
+- [Aulas PPPI](https://github.com/AndreiLegram/aulas_pppi)
+- [Aulas DS](https://github.com/AndreiLegram/aulas_ds)
 
 #### Created by:
 
-- Andrei Legramerda: [AndreiLegram](https://github.com/AndreiLegram)
-- Bernardo Facinho: [ber0604](https://github.com/ber0604)
-- Pedro Ferrado: [PedritoFerrrari](https://github.com/PedritoFerrrari)
+- [AndreiLegram](https://github.com/AndreiLegram)
