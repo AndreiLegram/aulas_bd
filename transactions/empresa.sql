@@ -5,7 +5,6 @@ use empresa;
 create table clientes(
     id int not null,
     nome varchar(255) not null,
-    valor_unitario decimal (11, 2) not null,
     primary key (id)
 );
 
