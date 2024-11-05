@@ -2,11 +2,6 @@
 
 USE campeonatobrasileiro;
 
-SELECT * FROM times t;
-SELECT * FROM jogadores j;
-SELECT * FROM partidas p;
-SELECT * FROM gols g;
-
 /* A. Criar uma função chamada “pontos”, que irá receber como parâmetro o ID do
 	  time, calcular e retornar sua pontuação baseada na seguinte regra: jogos que
 	  o time venceu valem 3 pontos, jogos que o time empatou vale 1 ponto e jogos
@@ -122,22 +117,40 @@ DELIMITER $$
 
 CREATE PROCEDURE inserir_gol(IN partida int, IN jogador int, IN minuto int, IN contra bool)
 BEGIN
-	DECLARE is_gol_mandante int;
+	DECLARE is_gol_mandante INT DEFAULT 0;
+	DECLARE is_gol_visitante INT DEFAULT 0;
 
-	INSERT INTO gols (id_partida, id_jogador, tempo, gol_contra)
-	VALUES (partida, jogador, minuto, contra);
-
-	SELECT CAST(p.id AS BINARY) INTO is_gol_mandante
+	SELECT 
+		CASE
+			WHEN jm.id IS NOT NULL AND NOT contra THEN 1
+			WHEN jv.id IS NOT NULL AND contra THEN 1
+			ELSE 0
+		END INTO is_gol_mandante
 	FROM partidas p
-	JOIN jogadores jm ON jm.id_time = p.id_time_mandante AND jm.id = jogador
-	JOIN jogadores jv ON jv.id_time = p.id_time_visitante AND jv.id = jogador
-	WHERE p.id = partida AND
-	((jm.id = jogador AND NOT contra) OR (jv.id = jogador AND contra));
-	
-	IF is_gol_mandante THEN 
+	LEFT JOIN jogadores jm ON jm.id_time = p.id_time_mandante AND jm.id = jogador
+	LEFT JOIN jogadores jv ON jv.id_time = p.id_time_visitante AND jv.id = jogador
+	WHERE p.id = partida;
+
+	SELECT
+		CASE
+			WHEN jm.id IS NOT NULL AND contra THEN 1
+			WHEN jv.id IS NOT NULL AND NOT contra THEN 1
+			ELSE 0
+		END INTO is_gol_visitante
+	FROM partidas p
+	LEFT JOIN jogadores jm ON jm.id_time = p.id_time_mandante AND jm.id = jogador
+	LEFT JOIN jogadores jv ON jv.id_time = p.id_time_visitante AND jv.id = jogador
+	WHERE p.id = partida;
+
+	IF is_gol_mandante = 1 OR is_gol_visitante = 1 THEN 
+		INSERT INTO gols (id_partida, id_jogador, tempo, gol_contra)
+		VALUES (partida, jogador, minuto, contra);
+	END IF;
+
+	IF is_gol_mandante = 1 THEN 
 		UPDATE partidas SET placar_time_mandante = placar_time_mandante + 1
 		WHERE id = partida;
-	ELSE
+	ELSEIF is_gol_visitante = 1 THEN
 		UPDATE partidas SET placar_time_visitante = placar_time_visitante + 1
 		WHERE id = partida;
 	END IF;
@@ -155,7 +168,22 @@ CALL inserir_gol(5, 90, 90, false);
 
 /* G. Criar uma procedure chamada “artilheiro” que irá obter o nome do artilheiro
 	  do campeonato e retornar este valor; */
+DROP PROCEDURE IF EXISTS artilheiro;
+
+DELIMITER $$
+
+CREATE PROCEDURE artilheiro(OUT nome_artilheiro varchar(255))
+BEGIN
+	SELECT j.nome INTO nome_artilheiro
+	FROM gols g JOIN jogadores j ON j.id = g.id_jogador
+	WHERE g.gol_contra = 0 GROUP BY j.id
+	ORDER BY COUNT(g.id) DESC, j.id LIMIT 1;
+END $$
+
+DELIMITER ;
 
 /* H. Executar a procedure acima, passando por parâmetro uma variável que irá
 	  receber o nome do artilheiro. Após isso, criar uma consulta de seleção que irá
 	  exibir o conteúdo da variável. */
+CALL artilheiro(@nome_artilheiro);
+SELECT @nome_artilheiro;
