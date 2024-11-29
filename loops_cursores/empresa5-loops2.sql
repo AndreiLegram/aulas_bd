@@ -1,46 +1,36 @@
 use empresa5;
 
 delimiter $$
-
-CREATE PROCEDURE calcular_comissoes(OUT total float)
-BEGIN
-	DECLARE concluido bool DEFAULT FALSE;
-	DECLARE tipo_vendedor enum('A', 'B', 'C');
-	DECLARE valor_venda float;
-	
-	DECLARE cur CURSOR FOR
-		SELECT ve.tipo, va.valor_total FROM vendas va
-		LEFT JOIN vendedores ve ON ve.id = va.id_vendedor;
-	
-	DECLARE CONTINUE handler FOR NOT FOUND SET concluido = TRUE;
-	
-	SET total = 0;
-
-	OPEN cur;
-
-	loop_calcular_comissao: LOOP
-		FETCH cur INTO tipo_vendedor, valor_venda;
-
-		IF concluido THEN
-			LEAVE loop_calcular_comissao;
-		END IF;
-	
-		IF tipo_vendedor = 'A' THEN
-			SET total = total + valor_venda * 0.2;
-		ELSE
-			IF tipo_vendedor = 'B' THEN
-				SET total = total + valor_venda * 0.1;
-			ELSE
-				SET total = total + valor_venda * 0.05;
-			END IF;
-		END IF;
-	END LOOP;
-
-	CLOSE cur;
-
-END $$
-
+create procedure calcular_comissoes_com_continue(out total float)
+begin
+	declare concluido bool default false;
+    declare tipo_vendedor enum('A', 'B', 'C');
+    declare valor_venda float;
+    declare cur cursor for 
+		select ve.tipo, v.valor_total from vendas v 
+        left join vendedores ve on ve.id = v.id_vendedor;
+	declare continue handler for not found set concluido = true;
+    
+    set total = 0;
+    open cur;
+    loop_vendas_comissao: loop
+		fetch cur into tipo_vendedor, valor_venda;
+        if concluido then 
+			leave loop_vendas_comissao;
+		end if;
+        if tipo_vendedor = 'A' then 
+			set total = total + (valor_venda * 0.2);
+            iterate loop_vendas_comissao;
+		end if;
+        if tipo_vendedor = 'B' then 
+			set total = total + (valor_venda * 0.1);
+            iterate loop_vendas_comissao;
+		end if;
+		set total = total + (valor_venda * 0.05);
+    end loop;
+    close cur;
+end $$
 delimiter ;
 
-call calcular_comissoes(@total_comissao);
-SELECT @total_comissao;
+call calcular_comissoes_com_continue(@total_comissao_com_continue);
+select @total_comissao_com_continue;
